@@ -8,7 +8,7 @@ export class PostsService {
   private posts: Post[] = [];
 
   getPosts(): Post[] {
-    return [...this.posts];
+    return this.posts;
   }
 
   addPost(title: string, content: string): void {
