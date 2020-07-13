@@ -1,9 +1,13 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 
 const app = express();
 
-//middleware to handle CORS issue
+//middleware to parse the json object and add it as body to response
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
+//middleware to handle CORS (Cross Origin Resource Sharing) issue
 app.use((req, res, next) => {
   // which domains are allowed access to resource
   res.setHeader("Access-Control-Allow-Origin", "*");
