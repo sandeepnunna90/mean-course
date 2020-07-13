@@ -1,9 +1,20 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const Post = require('./models/post');
 
 const app = express();
+
+const db = "mongodb+srv://sandeep:Uo7IBBmJDTfSsPuz@cluster0.ldtvf.mongodb.net/<dbname>?retryWrites=true&w=majority";
+
+mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Connected to database!');
+  })
+  .catch(() => {
+    console.log('Connection failed!');
+  });
 
 //middleware to parse the json object and add it as body to response
 app.use(bodyParser.json());
