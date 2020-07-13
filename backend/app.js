@@ -6,7 +6,7 @@ const Post = require('./models/post');
 
 const app = express();
 
-const db = "mongodb+srv://sandeep:Uo7IBBmJDTfSsPuz@cluster0.ldtvf.mongodb.net/<dbname>?retryWrites=true&w=majority";
+const db = "mongodb+srv://sandeep:Uo7IBBmJDTfSsPuz@cluster0.ldtvf.mongodb.net/node-angular?retryWrites=true&w=majority";
 
 mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
