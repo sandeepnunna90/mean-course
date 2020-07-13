@@ -42,9 +42,10 @@ export class PostsService {
     // ts lint shorthand notation
     // title: title ----> title (can be written like this)
     const post: Post = { id: null, title, content };
-    this.http.post<{ message: string }>('http://localhost:3000/api/posts', post)
+    this.http.post<{ message: string, postId: string }>('http://localhost:3000/api/posts', post)
       .subscribe((responseData) => {
-        console.log(responseData.message);
+        const id = responseData.postId;
+        post.id = id;
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
       });
@@ -53,8 +54,9 @@ export class PostsService {
   deletePost(postId: string): void {
     this.http.delete('http://localhost:3000/api/posts/' + postId)
       .subscribe(() => {
-        // console.log('postId: ', postId);
-        console.log('Deleted!');
+        const updatedPosts = this.posts.filter(post => post.id !== postId);
+        this.posts = updatedPosts;
+        this.postsUpdated.next([...this.posts]);
       });
   }
 }
