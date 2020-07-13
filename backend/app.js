@@ -23,20 +23,23 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //middleware to handle CORS (Cross Origin Resource Sharing) issue
 app.use((req, res, next) => {
   // which domains are allowed access to resource
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    'Access-Control-Allow-Origin', '*'
+  );
 
   // restrict to domains sending request with a certain set of headers
   // apart from the default headers
   res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
   );
 
   // we control which http verbs are allowed to send requests
   res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PATCH, DELETE, OPTIONS"
+    'Access-Control-Allow-Methods',
+    'GET, POST, PATCH, PUT, OPTIONS, DELETE'
   );
+
   next();
 });
 
@@ -61,4 +64,11 @@ app.get('/api/posts', (req, res, next) => {
     });
 });
 
+app.delete('/api/posts/:id', (req, res, next) => {
+  Post.deleteOne({ _id: req.params.id })
+    .then((result) => {
+      console.log(result);
+    });
+  res.status(200).json({ message: 'Post Deleted' });
+});
 module.exports = app;
