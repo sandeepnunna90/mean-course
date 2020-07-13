@@ -17,7 +17,7 @@ export class PostsService {
     this.http.get<{ message: string, posts: Post[] }>('http://localhost:3000/api/posts')
       .subscribe((postData) => {
         this.posts = postData.posts;
-        this.postsUpdated.next([...this.posts])
+        this.postsUpdated.next([...this.posts]);
       });
   }
 
@@ -29,7 +29,11 @@ export class PostsService {
     // ts lint shorthand notation
     // title: title ----> title (can be written like this)
     const post: Post = { id: null, title, content };
-    this.posts.push(post);
-    this.postsUpdated.next([...this.posts]);
+    this.http.post<{ message: string }>('http://localhost:3000/api/posts', post)
+      .subscribe((responseData) => {
+        console.log(responseData.message);
+        this.posts.push(post);
+        this.postsUpdated.next([...this.posts]);
+      });
   }
 }
