@@ -38,6 +38,11 @@ export class PostsService {
     return this.postsUpdated.asObservable();
   }
 
+
+  getPost(id: string): Post {
+    return { ...this.posts.find(post => post.id === id) };
+  }
+
   addPost(title: string, content: string): void {
     // ts lint shorthand notation
     // title: title ----> title (can be written like this)
