@@ -46,14 +46,23 @@ export class PostsService {
     );
   }
 
-  addPost(title: string, content: string): void {
-    // ts lint shorthand notation
-    // title: title ----> title (can be written like this)
-    const post: Post = { id: null, title, content };
-    this.http.post<{ message: string, postId: string }>('http://localhost:3000/api/posts', post)
-      .subscribe((responseData) => {
-        const id = responseData.postId;
-        post.id = id;
+  addPost(title: string, content: string, image: File): any {
+    // we cannot directly pass file to json, so we are using the JS FormData Object
+    const postData = new FormData();
+    postData.append('title', title);
+    postData.append('content', content);
+    postData.append('image', image, title);
+    this.http
+      .post<{ message: string, postId: string }>(
+        'http://localhost:3000/api/posts',
+        postData
+      )
+      .subscribe(responseData => {
+        const post: Post = {
+          id: responseData.postId,
+          title,
+          content
+        };
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
