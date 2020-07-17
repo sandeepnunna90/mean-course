@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -19,6 +20,7 @@ mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
 //middleware to parse the json object and add it as body to response
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use('/images', express.static(path.join('backend/images')));
 
 //middleware to handle CORS (Cross Origin Resource Sharing) issue
 app.use((req, res, next) => {
