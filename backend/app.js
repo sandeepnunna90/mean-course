@@ -39,7 +39,7 @@ app.use((req, res, next) => {
   // apart from the default headers
   res.setHeader(
     'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
   );
 
   // we control which http verbs are allowed to send requests
