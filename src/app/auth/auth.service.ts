@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Subject, Observable } from 'rxjs';
 
 import { AuthData } from './auth-data.model';
 
@@ -8,11 +9,19 @@ import { AuthData } from './auth-data.model';
 })
 export class AuthService {
   private token: string;
+  // This will be new subject imported from RxJs
+  // We will use the subject to push the authentication information
+  // to the components which are interested
+  private authStatusListener = new Subject<boolean>();
 
   constructor(private http: HttpClient) { }
 
   getToken(): string {
     return this.token;
+  }
+
+  getAuthStatusListener(): Observable<boolean> {
+    return this.authStatusListener.asObservable();
   }
 
   createUser(email: string, password: string): void {
@@ -29,6 +38,7 @@ export class AuthService {
       .subscribe(response => {
         const token = response.token;
         this.token = token;
+        this.authStatusListener.next(true);
       });
   }
 }
