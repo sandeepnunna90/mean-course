@@ -8,9 +8,14 @@ const userRoutes = require('./routes/user');
 
 const app = express();
 
-const db = "mongodb+srv://sandeep:Uo7IBBmJDTfSsPuz@cluster0.ldtvf.mongodb.net/node-angular?retryWrites=true&w=majority";
+//remove retryWrites=true if you get a circular dependency error on the node js side
+const connectionUrl = "mongodb+srv://sandeep:Uo7IBBmJDTfSsPuz@cluster0.ldtvf.mongodb.net/node-angular?retryWrites=true&w=majority";
+const connectionConfig = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+};
 
-mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(connectionUrl, connectionConfig)
   .then(() => {
     console.log('Connected to database!');
   })
