@@ -6,10 +6,10 @@ const router = express.Router();
 
 router.post('/signup', (req, res, next) => {
   bcrypt.hash(req.body.password, 10)
-    .then(hash => {
+    .then(hashedPassword => {
       const user = new User({
         email: req.body.email,
-        password: req.body.password
+        password: hashedPassword
       });
       user.save()
         .then(result => {
