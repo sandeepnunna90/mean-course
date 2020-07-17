@@ -29,13 +29,15 @@ export class PostListComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.postsService.getPosts(this.postsPerPage, this.currentPage);
     this.postsSub = this.postsService.getPostUpdateListner()
-      .subscribe((posts: Post[]) => {
+      .subscribe((postData: { posts: Post[], postCount: number }) => {
         this.isLoading = false;
-        this.posts = posts;
+        this.totalPosts = postData.postCount;
+        this.posts = postData.posts;
       });
   }
 
   onChangedPage(pageData: PageEvent): void {
+    this.isLoading = true;
     // +1 is needed as backend page numbers starts from 1 unlike UI which start from 0
     this.currentPage = pageData.pageIndex + 1;
     this.postsPerPage = pageData.pageSize;
@@ -43,7 +45,10 @@ export class PostListComponent implements OnInit, OnDestroy {
   }
 
   onDelete(postId: string): void {
-    this.postsService.deletePost(postId);
+    this.isLoading = true;
+    this.postsService.deletePost(postId).subscribe(() => {
+      this.postsService.getPosts(this.postsPerPage, this.currentPage);
+    });
   }
 
   ngOnDestroy(): void {
