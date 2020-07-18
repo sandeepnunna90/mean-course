@@ -22,6 +22,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
       });
   }
 
+  onLogout(): void {
+    this.authService.logout();
+  }
+
   // when creating a subscription manually, we will have to usubscribe it
   // this is not applicabale to httpModule for services as the module handles it
   ngOnDestroy(): void {
