@@ -63,10 +63,13 @@ router.put(
       content: req.body.content,
       imagePath: req.body.imagePath
     });
-    console.log(post);
-    Post.updateOne({ _id: req.params.id }, post)
-      .then(() => {
-        res.status(200).json({ message: "Update successful" });
+    Post.updateOne({ _id: req.params.id, creator: req.userData.userId }, post)
+      .then((result) => {
+        if (result.nModified > 0) {
+          res.status(200).json({ message: 'Update successful' });
+        } else {
+          res.status(401).json({ message: 'Not authorized' });
+        }
       });
   });
 
@@ -104,11 +107,16 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.delete('/:id', checkAuth, (req, res, next) => {
-  Post.deleteOne({ _id: req.params.id })
+  Post.deleteOne({ _id: req.params.id, creator: req.userData.userId })
     .then((result) => {
       console.log(result);
+      // used n in lecture, we can also deletedCount as it is part of result
+      if (result.n > 0) {
+        res.status(200).json({ message: 'Deletion successful' });
+      } else {
+        res.status(401).json({ message: 'Not authorized' });
+      }
     });
-  res.status(200).json({ message: 'Post Deleted' });
 });
 
 module.exports = router;
