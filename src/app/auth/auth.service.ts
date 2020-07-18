@@ -9,6 +9,7 @@ import { AuthData } from './auth-data.model';
 })
 export class AuthService {
   private token: string;
+  private isAuthenticated = false;
   // This will be new subject imported from RxJs
   // We will use the subject to push the authentication information
   // to the components which are interested
@@ -18,6 +19,10 @@ export class AuthService {
 
   getToken(): string {
     return this.token;
+  }
+
+  getIsAuth(): boolean {
+    return this.isAuthenticated;
   }
 
   getAuthStatusListener(): Observable<boolean> {
@@ -38,7 +43,10 @@ export class AuthService {
       .subscribe(response => {
         const token = response.token;
         this.token = token;
-        this.authStatusListener.next(true);
+        if (token) {
+          this.isAuthenticated = true;
+          this.authStatusListener.next(true);
+        }
       });
   }
 }
