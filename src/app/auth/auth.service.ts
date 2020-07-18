@@ -48,9 +48,7 @@ export class AuthService {
         this.token = token;
         if (token) {
           const expiresInDuration = response.expiresIn;
-          this.tokenTimer = setTimeout(() => {
-            this.logout();
-          }, expiresInDuration * 1000);
+          this.setAuthTimer(expiresInDuration);
           this.isAuthenticated = true;
           this.authStatusListener.next(true);
           const now = new Date();
@@ -62,6 +60,22 @@ export class AuthService {
       });
   }
 
+  autoAuthUser(): void {
+    const authInformation = this.getAuthData();
+    if (!authInformation) {
+      return;
+    }
+    const now = new Date();
+    // check if token is valid from expiration perspective
+    const expiresIn = authInformation.expirationDate.getTime() - now.getTime();
+    if (expiresIn > 0) {
+      this.token = authInformation.token;
+      this.isAuthenticated = true;
+      this.setAuthTimer(expiresIn / 100); // expiresIn is in milliseconds
+      this.authStatusListener.next(true);
+    }
+  }
+
   logout(): void {
     this.token = null;
     this.isAuthenticated = false;
@@ -69,6 +83,13 @@ export class AuthService {
     clearTimeout(this.tokenTimer);
     this.clearAuthData();
     this.router.navigate(['/']);
+  }
+
+  private setAuthTimer(duration: number): void {
+    console.log('Setting Timer: ', duration);
+    this.tokenTimer = setTimeout(() => {
+      this.logout();
+    }, duration * 1000);
   }
 
   // setTime saves key-value pairs
@@ -83,5 +104,17 @@ export class AuthService {
   private clearAuthData(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('expiration');
+  }
+
+  // get authdata from the browser localstorage if it exists
+  private getAuthData(): { token: string, expirationDate: Date } {
+    const token = localStorage.getItem('token');
+    const expirationDate = localStorage.getItem('expiration');
+    if (!token || !expirationDate) {
+      return;
+    }
+
+    // token -> short hand notation
+    return { token, expirationDate: new Date(expirationDate) };
   }
 }
