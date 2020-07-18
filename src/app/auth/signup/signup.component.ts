@@ -8,11 +8,14 @@ import { AuthService } from '../auth.service';
 })
 export class SignupComponent {
   isLoading = false;
+
   constructor(public authService: AuthService) { }
+
   onSignup(form: NgForm): void {
     if (form.invalid) {
       return;
     }
+    this.isLoading = true;
     this.authService.createUser(form.value.email, form.value.password);
   }
 }
