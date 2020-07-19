@@ -9,7 +9,7 @@ const userRoutes = require('./routes/user');
 const app = express();
 
 //remove retryWrites=true if you get a circular dependency error on the node js side
-const connectionUrl = "mongodb+srv://sandeep:Uo7IBBmJDTfSsPuz@cluster0.ldtvf.mongodb.net/node-angular?retryWrites=true&w=majority";
+const connectionUrl = "mongodb+srv://sandeep:" + process.env.MONGO_ATLAS_PW + "@cluster0.ldtvf.mongodb.net/node-angular?retryWrites=true&w=majority";
 const connectionConfig = {
   useNewUrlParser: true,
   useUnifiedTopology: true
