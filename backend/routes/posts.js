@@ -35,17 +35,24 @@ router.post('', checkAuth, multer({ storage: storage }).single('image'), (req, r
     imagePath: url + '/images/' + req.file.filename,
     creator: req.userData.userId
   });
-  post.save().then(createdPost => {
-    res.status(201).json({
-      message: 'Post added sucessfully',
-      post: {
-        id: createdPost._id,
-        title: createdPost.title,
-        content: createdPost.content,
-        imagePath: createdPost.imagePath
-      }
+  post
+    .save()
+    .then(createdPost => {
+      res.status(201).json({
+        message: 'Post added sucessfully',
+        post: {
+          id: createdPost._id,
+          title: createdPost.title,
+          content: createdPost.content,
+          imagePath: createdPost.imagePath
+        }
+      });
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: 'creating a post failed!'
+      })
     });
-  });
 });
 
 router.put(
@@ -67,10 +74,15 @@ router.put(
     Post.updateOne({ _id: req.params.id, creator: req.userData.userId }, post)
       .then((result) => {
         if (result.nModified > 0) {
-          res.status(200).json({ message: 'Update successful' });
+          res.status(200).json({ message: 'Update successful!' });
         } else {
-          res.status(401).json({ message: 'Not authorized' });
+          res.status(401).json({ message: 'Not authorized!' });
         }
+      }) // catch will be only reached if something goes wrong technically in the above
+      .catch(error => { // if we just don't find a user, it will go to the then block
+        res.status(500).json({
+          message: "Couldn't update post!"
+        })
       });
   });
 
@@ -88,27 +100,41 @@ router.get('', (req, res, next) => {
     .then(documents => {
       fetchedPosts = documents;
       return Post.count();
-    }).then(count => {
+    })
+    .then(count => {
       res.status(200).json({
         message: 'Posts fetched succesfully!',
         posts: fetchedPosts,
         maxPosts: count
       });
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: 'Fetching posts failed!'
+      });
     });
 });
 
 router.get('/:id', (req, res, next) => {
-  Post.findById(req.params.id).then(post => {
-    if (post) {
-      res.status(200).json(post);
-    } else {
-      res.status(404).json({ message: 'Post not found!' });
-    }
-  });
+  Post
+    .findById(req.params.id)
+    .then(post => {
+      if (post) {
+        res.status(200).json(post);
+      } else {
+        res.status(404).json({ message: 'Post not found!' });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: 'Fetching post failed!'
+      });
+    });
 });
 
 router.delete('/:id', checkAuth, (req, res, next) => {
-  Post.deleteOne({ _id: req.params.id, creator: req.userData.userId })
+  Post
+    .deleteOne({ _id: req.params.id, creator: req.userData.userId })
     .then((result) => {
       console.log(result);
       // used n in lecture, we can also deletedCount as it is part of result
@@ -117,6 +143,11 @@ router.delete('/:id', checkAuth, (req, res, next) => {
       } else {
         res.status(401).json({ message: 'Not authorized' });
       }
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: 'Failed to Delete Post!'
+      });
     });
 });
 
